@@ -1,0 +1,5 @@
+hypercorn
+psycopg2-binary
+django-redis
+django
+djangorestframework
