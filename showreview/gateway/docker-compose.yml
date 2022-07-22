@@ -19,7 +19,7 @@ services:
       - cache:/data
   web:
     build: .
-    command: hypercorn --bind 0.0.0.0:8000 ApiGateway.asgi:application
+    command: hypercorn --reload --bind 0.0.0.0:8000 ApiGateway.asgi:application
     volumes:
       - .:/code
     ports:
@@ -28,6 +28,10 @@ services:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - REDIS_LOCATION=redis://redis/0
+    links:
+      - postgres
+      - cache
     depends_on:
       - postgres
       - cache
