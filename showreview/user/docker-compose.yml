@@ -9,32 +9,18 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-  cache:
-    image: redis:6.2-alpine
-    restart: always
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    volumes: 
-      - cache:/data
-  api-gateway:
+  api-user:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8010
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "8010:8010"
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - REDIS_LOCATION=redis://redis/0
     links:
       - postgres
-      - cache
     depends_on:
       - postgres
-      - cache
-volumes:
-  cache:
-    driver: local

@@ -9,6 +9,9 @@ class Api(AbstractUser):
 	api_path = models.CharField(max_length=255)
 	main_url = models.CharField(max_length=255)
 	
+	def handle_request(self, request):
+		pass
+	
 	def __str__(self):
 		return self.name
 
