@@ -1,6 +1,6 @@
 psycopg2-binary
 django-redis
 django
+requests
 djangorestframework
-djangorestframework-simplejwt
-djangorestframework-simplejwt[crypto]
+

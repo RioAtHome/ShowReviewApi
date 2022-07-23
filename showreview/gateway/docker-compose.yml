@@ -14,9 +14,8 @@ services:
     restart: always
     ports:
       - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    volumes: 
-      - cache:/data
+    command: redis-server
+
   api-gateway:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -28,7 +27,7 @@ services:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - REDIS_LOCATION=redis://redis/0
+      - REDIS_LOCATION=redis://cache:6379/1
     links:
       - postgres
       - cache
