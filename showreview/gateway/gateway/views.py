@@ -33,10 +33,11 @@ class Routing(APIView):
 			if not token in cache:
 				headers = {'content-type': 'application/json', 'JWT':token}
 				api = Api.objects.filter(name='user')[0]
-				url = api.main_url + 'verify/'
+				url = 'http://' + api.main_url + 'verify/'
+				print(url)
 				resp = requests.get(url, headers=headers, timeout=2.50) 
 				if resp.status_code == 200:
-					cache.set(token, '', timeout=CACHE)
+					cache.set(token, '', timeout=CACHE_TTL)
 				else:
 					return Response('Token is unvalid', status=status.HTTP_400_BAD_REQUEST)
 			request.META['HTTP_JWT'] = token
