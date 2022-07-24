@@ -73,7 +73,6 @@ def change_role(request):
 		raise AuthenticationFailed('User Not Found')
 	
 	role = user.role
-	print(role)
 	role ^= 1
 
 	changes = ApiUser.objects.filter(username=flip_user).update(role=role)
