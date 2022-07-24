@@ -19,16 +19,19 @@ class Routing(APIView):
 		path = request_path.split('/')
 		if len(path) < 2:
 			return Response('bad request', status=status.HTTP_400_BAD_REQUEST)
-		api = Api.objects.filter(name=path[2])
+		api = Api.objects.filter(name=path[2]).first()
+		user_api = Api.objects.filter(name='user').first()
 
-		if api.count() != 1:
+		if api is None:
 			return Response('bad request', status=status.HTTP_400_BAD_REQUEST)
-
+		token = request.META['HTTP_JWT']
 		requested_service = '/'.join(path[2:])
 
 		if requested_service == 'user/register/':
 			resp = api[0].handle_request(request, requested_service)
-			
+
+		elif requested_service == 'user/verify/':
+			resp = api.handle_request(request, requested_service, token)	
 		else:	
 			token = request.META.get('HTTP_JWT')
 			if not token:
@@ -36,19 +39,18 @@ class Routing(APIView):
 			if not token in cache:
 				headers = {'content-type': 'application/json', 'JWT':token}
 				api = Api.objects.filter(name='user').first()
-				url = api.main_url + 'user/verify/'
-
-				resp = requests.get(url, headers=headers, timeout=2.50) 
+				url = user_api.main_url + 'user/verify/'
+				
+				resp = requests.post(url, headers=headers, timeout=2.50) 
 				if resp.status_code == 200:
 					cache.set(token, '', timeout=CACHE_TTL)
 				else:
 					return Response('Token is unvalid', status=status.HTTP_400_BAD_REQUEST)
 			request.META['HTTP_JWT'] = token
-			resp = api[0].handle_request(request, relative_url)
+			resp = api.handle_request(request, requested_service, token)
 		
 		if resp.headers.get('Content-Type', '').lower() == 'application/json':
 			data = resp.json()
-			print(data)
 		else:
 			data = resp.content
 

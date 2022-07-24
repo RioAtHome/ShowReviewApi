@@ -6,8 +6,8 @@ class ApiUser(AbstractUser):
 	username = models.CharField(max_length=255, unique=True)
 	password = models.CharField(max_length=255)
 
-	ROLE = (('N', 'Normal User'), ('A', 'Admin'))
-	role = models.CharField(max_length=1, choices=ROLE, default='N')
+	ROLE = ((0, 'Normal User'), (1, 'Admin'))
+	role = models.BooleanField(choices=ROLE, default=0)
 	
 	USERNAME_FIELD = 'username'
 	REQUIRED_FIELDS = ['password']

@@ -9,26 +9,10 @@ from .serializers import ApiUserSerializer
 from .models import ApiUser
 
 # Create your views here.
-@api_view(['POST'])
-def register(request):
-	serializer = ApiUserSerializer(data=request.data)
-	serializer.is_valid(raise_exception=True)
-	serializer.save()
 
-	payload = {
-		'username':user.username,
-		'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=360),
-		'iat': datetime.datetime.utcnow(),
-	}
-
-	token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-
-	return Response(serializer.data, headers={'JWT': token})
-
-
-@api_view(['POST'])
-def verify(request):
+def get_payload(request):
 	try:
+		print(request.META)
 		token = request.META['HTTP_JWT']
 	except KeyError:
 		raise AuthenticationFailed('Token not provided')
@@ -37,11 +21,80 @@ def verify(request):
 	except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
 		raise AuthenticationFailed('Unauthenticated!')
 
+	return payload
 
+
+@api_view(['POST'])
+def register(request):
+	serializer = ApiUserSerializer(data=request.data)
+	serializer.is_valid(raise_exception=True)
+	serializer.save()
+
+	payload = {
+		'username':serializer.data['username'],
+		'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=360),
+		'iat': datetime.datetime.utcnow(),
+	}
+
+	token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+	
+	data = {'JWT': token}
+	data.update(serializer.data)
+	
+	return Response(data)
+
+
+@api_view(['POST'])
+def verify(request):
+	payload = get_payload(request)
 	user = ApiUser.objects.filter(username=payload['username']).first()
+	if user is None:
+		raise AuthenticationFailed('User Not Found')
 
+	return Response({'message':'A-Okay buddy!'}, headers={'JWT': request.META['HTTP_JWT']})
+
+
+@api_view(['POST'])
+def change_role(request):
+	payload = get_payload(request)
+
+	flip_user = request.data['username']
+	admin_user = payload['username']
+
+	admin = ApiUser.objects.filter(username=admin_user).first()
+	if admin.role == 1:
+		pass
+	else:
+		raise AuthenticationFailed('User Not authorized')
+	
+	user = ApiUser.objects.filter(username=flip_user).first()
 
 	if user is None:
 		raise AuthenticationFailed('User Not Found')
 	
-	return Response({'message':'A-Okay buddy!'}, headers={'JWT': token})
+	role = user.role
+	print(role)
+	role ^= 1
+
+	changes = ApiUser.objects.filter(username=flip_user).update(role=role)
+
+	return Response({'message':'Fliped user!'})
+
+
+@api_view(['GET'])
+def view_comments(request):
+	pass
+
+@api_view(['GET'])
+def view_reviews(request):
+	pass
+
+@api_view(['GET'])
+def view_favorites(request):
+	pass
+
+@api_view(['GET'])
+def view_homepage(request):
+	pass
+
+

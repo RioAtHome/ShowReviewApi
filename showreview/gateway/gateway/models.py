@@ -6,8 +6,8 @@ class Api(models.Model):
     name = models.CharField(max_length=64, unique=True)
     main_url = models.URLField(max_length=255, unique=True)
 
-    def handle_request(self, request, relative_url):
-        headers = {}
+    def handle_request(self, request, relative_url, token):
+        headers = {'JWT':token}
         full_path = self.main_url + relative_url
         method = request.method.lower()
 
@@ -19,6 +19,7 @@ class Api(models.Model):
         if request.content_type and request.content_type.lower()=='application/json':
             data = json.dumps(request.data)
             headers['content-type'] = request.content_type
+
         else:
             data = request.data
         print(full_path)
