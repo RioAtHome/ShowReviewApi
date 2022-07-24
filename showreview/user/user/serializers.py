@@ -5,7 +5,7 @@ from .models import ApiUser
 class ApiUserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ApiUser
-		fields = ['id', 'username', 'password']
+		fields = ['username', 'password']
 		extra_kwargs = {
 			'password':{'write_only': True}
 		}
