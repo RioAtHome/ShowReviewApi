@@ -2,18 +2,13 @@ import requests, json
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
-
 class Api(models.Model):
     name = models.CharField(max_length=64, unique=True)
-    main_url = models.CharField(max_length=255)
+    main_url = models.URLField(max_length=255, unique=True)
 
-
-    def handle_request(self, request):
+    def handle_request(self, request, relative_url):
         headers = {}
-        path = request.get_full_path().split('/')
-        relative_path = '/'.join(path[4:])
-        full_path = self.main_url + relative_path
+        full_path = self.main_url + relative_url
         method = request.method.lower()
 
         mapping_methods = {
@@ -26,8 +21,8 @@ class Api(models.Model):
             headers['content-type'] = request.content_type
         else:
             data = request.data
-
-        return method_map[method](url, headers=headers, data=data)
+        print(full_path)
+        return mapping_methods[method](full_path, headers=headers, data=data)
 
 
     def __str__(self):
