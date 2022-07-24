@@ -21,6 +21,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     links:
-      - postgres
+      - postgres-show
     depends_on:
-      - postgres
+      - postgres-show
