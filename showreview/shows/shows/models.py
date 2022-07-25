@@ -3,14 +3,22 @@ from django.core.validators import MinValueValidator
 
 
 class Show(models.Model):
+    class Meta:
+        ordering = ['num_of_favorites']
+
     show = models.CharField(max_length=200, primary_key=True)
     network = models.CharField(max_length=200)
-    air_date = models.DateTimeField()
-    end_date = models.DateTimeField()
-    num_of_favorites = models.PositiveIntegerField()
+    air_date = models.DateField()
+    end_date = models.DateField()
+    num_of_favorites = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        self.show = self.show.lower().replace(' ', '-');
+        self.network = self.network.lower()
+        return super().save(*args, **kwargs)
+    
     def __str__(self):
         return self.show
 
@@ -61,6 +69,14 @@ class Character(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        self.first_name = self.first_name.lower().replace(' ', '-')
+        self.middle_name = self.middle_name.lower().replace(' ', '-')
+        self.last_name = self.last_name.lower().replace(' ', '-')
+        
+        return super().save(*args, **kwargs)
+    
+
     @property
     def full_name(self):
         return self.first_name + self.middle_name + self.last_name
@@ -76,6 +92,10 @@ class Season(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        self.name = self.name.lower().replace(' ', '-');
+        return super().save(*args, **kwargs)
+    
     def __str__(self):
         return self.name
 
@@ -85,9 +105,10 @@ class Episode(models.Model):
     title = models.CharField(max_length=200)
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
     number_of_episode = models.PositiveIntegerField(validators=[MinValueValidator(1)])
-    release_date = models.DateTimeField()
+    release_date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
 
     def __str__(self):
         return self.title

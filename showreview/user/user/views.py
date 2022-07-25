@@ -29,7 +29,8 @@ def register(request):
 	serializer.save()
 
 	payload = {
-		'username':serializer.data['username'],
+		'usr': serializer.data['username'],
+		'rol': serializer.data['role'],
 		'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=360),
 		'iat': datetime.datetime.utcnow(),
 	}

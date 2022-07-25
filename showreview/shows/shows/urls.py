@@ -1,5 +1,6 @@
 from django.urls import path, include
 from .views import (
+    shows_view,
     show_view,
     season_view,
     comment_view,
@@ -10,7 +11,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path("", show_view),
+    path("", shows_view),
     path("<str:show_name>/", show_view),
     path("<str:show_name>/<int:season_id>/", season_view),
     path("<str:show_name>/favorites", favorite),
