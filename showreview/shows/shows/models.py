@@ -10,6 +10,8 @@ class Show(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.show
 
 class Comment(models.Model):
     username = models.CharField(max_length=200)
@@ -18,6 +20,8 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    def __str__(self):
+        return self.id    
 
 class Review(models.Model):
     username = models.CharField(max_length=200)
@@ -26,6 +30,8 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.id
 
 class Favorites(models.Model):
     username = models.CharField(max_length=200)
@@ -33,6 +39,8 @@ class Favorites(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.show_id.id
 
 class Character(models.Model):
     STATUS = (('D', 'MALE'), ('A', 'Female'), ('U', 'Unknown'))
@@ -48,6 +56,12 @@ class Character(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def full_name(self):
+        return self.first_name + self.middle_name + self.last_name
+
+    def __str__(self):
+        return self.full_name
 
 class Season(models.Model):
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
@@ -55,6 +69,10 @@ class Season(models.Model):
     number_of_episodes = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
 
 
 class Episode(models.Model):
@@ -65,3 +83,6 @@ class Episode(models.Model):
     release_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title

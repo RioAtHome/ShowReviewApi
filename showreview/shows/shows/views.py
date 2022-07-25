@@ -7,6 +7,10 @@ from django.conf import settings
 from .models import Show, Comment, Review, Favorites, Character, Season, Episode
 from .serializers import ShowSerializer, CommentSerializer, ReviewSerializer, FavoritesSerializer, CharacterSerializer, SeasonSerializer, EpisodeSerializer
 
+@api_view(['GET'])
+def shows_view(request):
+	pass
+
 @api_view(['GET', 'POST', 'UPDATE'])
 def show_view(request):
 	pass
