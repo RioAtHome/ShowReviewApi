@@ -8,31 +8,16 @@ class EpisodeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Season
-        fields = [
-            "show_name",
-            "title",
-            "season_name",
-            "number_of_episode",
-            "release_date",
-            "created_at",
-            "updated_at",
-        ]
+        fields = '__all__'
+        extra_fields = ['show_name', 'season_name']
+        depth = 1
 
 
 class SeasonSerializer(serializers.ModelSerializer):
-    show_name = serializers.CharField(source="Show.show")
-    episodes = EpisodeSerializer(many=True, read_only=True)
-
     class Meta:
         model = Season
-        fields = [
-            "show_name",
-            "name",
-            "number_of_episodes",
-            "episodes",
-            "created_at",
-            "updated_at",
-        ]
+        fields = '__all__'
+        
 
 
 class ShowSerializer(serializers.ModelSerializer):
@@ -40,16 +25,8 @@ class ShowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Show
-        fields = [
-            "show",
-            "network",
-            "air_date",
-            "end_date",
-            "seasons",
-            "num_of_favorites",
-            "created_at",
-            "updated_at",
-        ]
+        fields = '__all__'
+        extra_fields = ['season']
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -57,7 +34,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ["username", "show_name", "text", "created_at", "updated_at"]
+        fields = '__all__'
+        extra_fields = ['show_name']
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -65,15 +43,15 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ["username", "show_name", "text", "created_at", "updated_at"]
+        fields = '__all__'
+        extra_fields = ['show_name']
 
 
 class FavoritesSerializer(serializers.ModelSerializer):
-    show_id = serializers.CharField(source="Show.id")
 
     class Meta:
         model = Favorites
-        fields = ["username", "show_id", "created_at"]
+        fields = '__all__'
 
 
 class FullNameField(serializers.Field):

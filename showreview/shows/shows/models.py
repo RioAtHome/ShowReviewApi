@@ -9,7 +9,7 @@ class Show(models.Model):
     show = models.CharField(max_length=200, primary_key=True)
     network = models.CharField(max_length=200)
     air_date = models.DateField()
-    end_date = models.DateField()
+    end_date = models.DateField(null=True)
     num_of_favorites = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -47,7 +47,7 @@ class Review(models.Model):
 
 class Favorites(models.Model):
     username = models.CharField(max_length=200)
-    show_id = models.ForeignKey(Show, on_delete=models.CASCADE)
+    show = models.ForeignKey(Show, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -87,15 +87,11 @@ class Character(models.Model):
 
 class Season(models.Model):
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
+    season_num = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     number_of_episodes = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        self.name = self.name.lower().replace(' ', '-');
-        return super().save(*args, **kwargs)
-    
     def __str__(self):
         return self.name
 
@@ -104,7 +100,7 @@ class Episode(models.Model):
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
-    number_of_episode = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    epi_num = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     release_date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
