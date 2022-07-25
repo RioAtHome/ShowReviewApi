@@ -29,10 +29,10 @@ services:
       - POSTGRES_PASSWORD=postgres
       - REDIS_LOCATION=redis://cache:6379/1
     links:
-      - postgres
+      - postgres-gateway
       - cache
     depends_on:
-      - postgres
+      - postgres-gateway
       - cache
 volumes:
   cache:

@@ -1,10 +1,8 @@
-from django.shortcuts import render
-from rest_framework import status
+import jwt, datetime
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
-import jwt, datetime
 from .serializers import ApiUserSerializer
 from .models import ApiUser
 
