@@ -1,4 +1,5 @@
 import jwt, datetime
+from jwt.exceptions import DecodeError
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -17,8 +18,15 @@ from .serializers import (
 )
 
 
-# in total, change gets to get more information about each topin
-# Show views characters, seasons, episodes reviews.
+SERAILIZER_MAP = {
+    'show': [ShowSerializer, Show],
+    'comment':[CommentSerializer, Comment],
+    'review':[ReviewSerializer, Review],
+    'favorite':[FavoritesSerializer, Favorites],
+    'character':[CharacterSerializer, Character],
+    'season':[SeasonSerializer, Season],
+    'episode':[EpisodeSerializer, Episode]
+}
 
 def get_payload(request):
     try:
@@ -28,10 +36,65 @@ def get_payload(request):
 
     try:
         payload = jwt.decode(token, options={"verify_signature": False})
-    except Exception as e:
-        raise e
+    except DecodeError:
+        raise AuthenticationFailed("Token is invalid")
 
     return payload
+
+
+def handle_request(request, model, filter_, auth=False):
+    _model = model
+    serializer = SERAILIZER_MAP[model][0]
+    model = SERAILIZER_MAP[model][1]
+    method = request.method
+    if method == "GET":
+        if model in ('review', 'comment'):
+            queryset = model.objects.filter(**filter_)[:3]
+        else:
+            queryset = model.objects.filter(**filter_).first()
+        if queryset is None:
+            raise NotFound()
+        s = serializer(queryset, context=method)
+
+        return Response(s.data)
+
+    elif method == "POST":
+        payload = get_payload(request)
+        data = request.data
+
+        if _model in ('review', 'comment'):
+            data['username'] = payload['usr']
+
+        data.update(filter_)
+        print(data)
+        if auth:
+            if payload['rol'] != 1:
+                raise AuthenticationFailed("User is not Authorized to edit/create data.")
+        queryset = model.objects.filter(**filter_).first()
+        
+        if queryset is not None:
+            return Response(f"Data already exists", status=404)
+
+
+        s = serializer(data=data, context=method)
+        s.is_valid(raise_exception=True)
+
+        if _model == 'episode':
+            season = Season.objects.filter(season_num=data['season'])
+            number_of_episodes = season[0].number_of_episodes + 1
+
+            season.update(number_of_episodes=number_of_episodes)
+        
+        s.save()
+
+
+
+        context = {
+        "message": "Data has been added successfully",
+        "data": s.data
+        }
+
+        return Response(context, status=201)
 
 
 @api_view(["GET"])
@@ -40,144 +103,40 @@ def shows_view(request):
     serializer = ShowSerializer(queryset, many=True)
     return Response(serializer.data)
 
-
 @api_view(["GET", "POST"])
 def show_view(request, *args, **kwargs):
-    show_name = kwargs['show_name'].lower()
-    if request.method == "GET":
-        queryset = Show.objects.all().filter(show=show_name).first()
-        if queryset is None:
-            raise NotFound()
-        serializer = ShowSerializer(queryset)
-        
-        return Response(serializer.data)
-
-    elif request.method == "POST":
-        payload = get_payload(request)
-        if payload['rol'] == 1:
-            serializer = ShowSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        else:
-            raise AuthenticationFailed("User is not Authorized to edit/create data.")
-
-        return Response(f"Show:{serializer.data['show']} with id:{serializer.data['id']} has been added")
-
+    filter_ = {'show':kwargs['show_name']}
+    return handle_request(request, 'show', filter_, True)
 
 @api_view(["GET", "POST"])
 def season_view(request, *args, **kwargs):
-    season_num = kwargs['season_num']
-    show_name = kwargs['show_name']
-
-    if request.method == "GET":
-        queryset = Season.objects.filter(show__show=show_name, season_num=season_num).first()
-        if queryset is None:
-            raise NotFound()
-        serializer = SeasonSerializer(queryset)
-
-        return Response(serializer.data)
-
-    elif request.method == "POST":
-        payload = get_payload(request)
-
-        if payload['rol'] == 1:
-            season = Season.objects.filter(show__show=show_name, season_num=season_num).first()
-            
-            if season is not None:
-                return Response(f"Season already exists", status=404)
-            
-            data = request.data
-            data['season_num'] = season_num
-            data['show_name'] = show_name
-            serializer = SeasonSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        else:
-            raise AuthenticationFailed("User is not Authorized to edit/create data.")
-
-        return Response(f"Season:{serializer.data['season_num']} has been added")
+    filter_ = {'season_num':kwargs['season_num'], 'show':kwargs['show_name']}
+    
+    return handle_request(request, 'season', filter_, True)
 
 @api_view(["GET", "POST"])
 def episode_view(request, *args, **kwargs):
-    epi_num = kwargs['epi_num']
-    season_num = kwargs['season_num']
-    show_name = kwargs['show_name']
-    if request.method == "GET":
-        queryset = Episode.objects.filter(show__show=show_name, season__season_num=season_num, epi_num=epi_num).first()
-        if queryset is None:
-            raise NotFound()
-        serializer = EpisodeSerializer(queryset)
-
-        return Response(serializer.data)
-
-    elif request.method == "POST":
-        payload = get_payload(request)
-        if payload['rol'] == 1:
-            episode = Episode.objects.filter(show__show=show_name, season__season_num=season_num, epi_num=epi_num).first()
-            if episode is not None:
-                return Response(f"Episode already exists", status=404)
-            
-            data = request.data
-
-            data['epi_num'] = epi_num
-            data['season_num'] = season_num
-            data['show_name'] = show_name
-
-
-            serializer = EpisodeSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        else:
-            raise AuthenticationFailed("User is not Authorized to edit/create data.")
-
+    filter_ = {'epi_num': kwargs['epi_num'], 'season': kwargs['season_num'], 'show':kwargs['show_name']}
+    
+    return handle_request(request, 'episode', filter_, True)
 
 # remove the whole last/first name
 @api_view(["GET", "POST"])
 def character_view(request, *args, **kwargs):
-    char_name = kwargs['char_name']
-    show_name = kwargs['show_name']
-    if request.method == "GET":
-        queryset = Character.objects.filter(show__show=show_name, first_name=char_name).first()
-        if queryset is None:
-            raise NotFound()
-        serializer = CharacterSerializer(queryset)
+    filter_ = {'name':kwargs['char_name'], 'show':kwargs['show_name']}
 
-        return Response(serializer.data)
-
-    elif request.method == "POST":
-        payload = get_payload(request)
-        if payload['rol'] == 1:
-            char_name = kwargs['char_name']
-            show_name = kwargs['show_name']
-            data = request.data
-            data['show_name'] = show_name
-            data['first_name'] = char_name
-            serializer = CharacterSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        else:
-            raise AuthenticationFailed("User is not Authorized to edit/create data.")
-
-
+    return handle_request(request, 'character', filter_, True)
 
 @api_view(["GET", "POST"])
 def review_view(request, *args, **kwargs):
-    if request.method == "GET":
-        pass
-
-    elif request.method == "POST":
-        payload = get_payload(request)
-        pass
-
+    filter_ = {'show':kwargs['show_name']}
+    return handle_request(request, 'review', filter_)
 
 @api_view(["GET", "POST"])
-def comment_view(request):
-    if request.method == "GET":
-        pass
-
-    elif request.method == "POST":
-        pass
-
+def comment_view(request, *args, **kwargs):
+    filter_ = {'review': kwargs['review_id'], 'show': kwargs['show_name']}
+    
+    return handle_request(request, 'comment', filter_)
 
 @api_view(["POST"])
 def favorite(request, *args, **kwargs):
@@ -189,10 +148,9 @@ def favorite(request, *args, **kwargs):
     serializer.is_valid(raise_exception=True)
     
     num_of_favorites = show[0].num_of_favorites + 1
+
     show.update(num_of_favorites=num_of_favorites)
 
     serializer.save()
 
     return Response(f"Show:{show_name} has been added to user {user} favorites")
-
-

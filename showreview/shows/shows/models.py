@@ -22,18 +22,6 @@ class Show(models.Model):
     def __str__(self):
         return self.show
 
-
-class Comment(models.Model):
-    username = models.CharField(max_length=200)
-    show = models.ForeignKey(Show, on_delete=models.CASCADE)
-    text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.id
-
-
 class Review(models.Model):
     username = models.CharField(max_length=200)
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
@@ -43,6 +31,18 @@ class Review(models.Model):
 
     def __str__(self):
         return self.id
+
+class Comment(models.Model):
+    username = models.CharField(max_length=200)
+    show = models.ForeignKey(Show, on_delete=models.CASCADE)
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.id
+
 
 
 class Favorites(models.Model):
@@ -56,33 +56,20 @@ class Favorites(models.Model):
 
 
 class Character(models.Model):
-    STATUS = (("D", "MALE"), ("A", "Female"), ("U", "Unknown"))
+    STATUS = (("D", "Dead"), ("A", "Alive"), ("U", "Unknown"))
     GENDER = (("M", "MALE"), ("F", "Female"))
 
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=50)
-    middle_name = models.CharField(max_length=50, null=True)
-    last_name = models.CharField(max_length=50, null=True)
+    name = models.CharField(max_length=200)
     age = models.PositiveIntegerField()
     gender = models.CharField(max_length=1, choices=GENDER)
     status = models.CharField(max_length=1, choices=STATUS)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        self.first_name = self.first_name.lower().replace(' ', '-')
-        self.middle_name = self.middle_name.lower().replace(' ', '-')
-        self.last_name = self.last_name.lower().replace(' ', '-')
-        
-        return super().save(*args, **kwargs)
-    
-
-    @property
-    def full_name(self):
-        return self.first_name + self.middle_name + self.last_name
 
     def __str__(self):
-        return self.full_name
+        return self.name
 
 
 class Season(models.Model):
@@ -93,7 +80,7 @@ class Season(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.season_num
 
 
 class Episode(models.Model):
