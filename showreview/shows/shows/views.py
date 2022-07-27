@@ -1,11 +1,9 @@
-import jwt, datetime
+import jwt
 from jwt.exceptions import DecodeError
-from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.http import HttpResponse, JsonResponse
 from rest_framework.exceptions import AuthenticationFailed, NotFound
-from django.conf import settings
+
 from .models import Show, Comment, Review, Favorites, Character, Season, Episode
 from .serializers import (
     ShowSerializer,
@@ -54,9 +52,12 @@ def handle_request(request, model, filter_, auth=False):
             queryset = model.objects.filter(**filter_).first()
         if queryset is None:
             raise NotFound()
+
         s = serializer(queryset, context=method)
 
-        return Response(s.data)
+        context = {_model: s.data}
+
+        return Response(context)
 
     elif method == "POST":
         payload = get_payload(request)
@@ -66,28 +67,19 @@ def handle_request(request, model, filter_, auth=False):
             data['username'] = payload['usr']
 
         data.update(filter_)
-        print(data)
+
         if auth:
             if payload['rol'] != 1:
                 raise AuthenticationFailed("User is not Authorized to edit/create data.")
+        
         queryset = model.objects.filter(**filter_).first()
         
         if queryset is not None:
             return Response(f"Data already exists", status=404)
 
-
         s = serializer(data=data, context=method)
         s.is_valid(raise_exception=True)
-
-        if _model == 'episode':
-            season = Season.objects.filter(season_num=data['season'])
-            number_of_episodes = season[0].number_of_episodes + 1
-
-            season.update(number_of_episodes=number_of_episodes)
-        
         s.save()
-
-
 
         context = {
         "message": "Data has been added successfully",
@@ -120,7 +112,6 @@ def episode_view(request, *args, **kwargs):
     
     return handle_request(request, 'episode', filter_, True)
 
-# remove the whole last/first name
 @api_view(["GET", "POST"])
 def character_view(request, *args, **kwargs):
     filter_ = {'name':kwargs['char_name'], 'show':kwargs['show_name']}
@@ -140,17 +131,6 @@ def comment_view(request, *args, **kwargs):
 
 @api_view(["POST"])
 def favorite(request, *args, **kwargs):
-    payload = get_payload(request)
-    user = payload['usr']
-    show_name = kwargs["show_name"]
-    show = Show.objects.filter(show=show_name)
-    serializer = FavoritesSerializer(data={'username': user, 'show':show_name})
-    serializer.is_valid(raise_exception=True)
-    
-    num_of_favorites = show[0].num_of_favorites + 1
+    filter_ = {'show_name': kwargs["show_name"]}
 
-    show.update(num_of_favorites=num_of_favorites)
-
-    serializer.save()
-
-    return Response(f"Show:{show_name} has been added to user {user} favorites")
+    return handle_request(request, 'favorite', filter_)

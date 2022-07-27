@@ -1,14 +1,25 @@
 version: "3.9"
    
 services:
+  show-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python data_server.py
+    depends_on:
+      - postgres-show
   postgres-show:
     image: postgres
+    container_name: postgres-show
+    hostname: postgres-show
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    networks:
+      - my-bridge
   api-show:
     build: .
     command: python manage.py runserver 0.0.0.0:8015
@@ -24,3 +35,7 @@ services:
       - postgres-show
     depends_on:
       - postgres-show
+    networks:
+      - my-bridge
+networks:
+  my-bridge:
