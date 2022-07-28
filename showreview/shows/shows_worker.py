@@ -5,34 +5,41 @@ import pika
 import django
 from django.core import serializers
 
-
 sys.path.append(os.path.join(sys.path[0], 'ShowsApi', 'settings.py'))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ShowsApi.settings')
+
 django.setup()
 
 from shows.models import Review, Comment, Favorites
+from shows.serializers import UserReviewSerializer, UserCommentSerializer, UserFavoriteSerializer
+
 
 def handle_request(ch, method, props, body):
+    body = json.loads(body)
     username = body['username']
-    _model = body['model']
+    _model = body['_model']
 
     resp = {}
 
     if _model == 'reviews':
-        queryset = Review.objects.filter(username=username)
-        resp = serializers.serialize('json', queryset)
+        queryset = Review.objects.all().filter(username=username)
+        resp = UserReviewSerializer(queryset, many=True)
     elif _model == 'comments':
         queryset = Comment.objects.filter(username=username)
-        resp = serializers.serialize('json', queryset)
+        resp = UserCommentSerializer(queryset, many=True)
     elif _model == 'favorites':
         queryset = Favorites.objects.filter(username=username)
-        resp = serializers.serialize('json', queryset)
-    
-    ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id),
-        body=json.dumps(resp))
+        resp = UserFavoriteSerializer(queryset, many=True)
+    print(resp.data)
+    ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id= \
+        props.correlation_id),
+        body=json.dumps(resp.data))
+    ch.basic_ack(delivery_tag=method.delivery_tag)
+
+
 
 if __name__ == '__main__':
-    params = pika.URLParameters('amqps://bwvvcnww:b4WjIHCwAtizbAo72daDwnt3IoOVgRlx@shrimp.rmq.cloudamqp.com/bwvvcnww')
+    params = pika.URLParameters(os.environ.get("RABBITMQ_URL"))
     connection = pika.BlockingConnection(params)
 
     channel = connection.channel()

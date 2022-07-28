@@ -1,11 +1,6 @@
 version: "3.9"
    
 services:
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    ports:
-        - 5672:5672
-        - 15672:15672
   postgres-user:
     image: postgres
     volumes:
@@ -25,9 +20,8 @@ services:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - RABBITMQ_URL="ENTER URL HERE"
     links:
       - postgres-user
-      - rabbitmq
     depends_on:
       - postgres-user
-      - rabbitmq

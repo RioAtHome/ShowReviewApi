@@ -83,3 +83,21 @@ class FavoritesSerializer(serializers.ModelSerializer):
         model = Favorites
         fields = '__all__'
 
+
+class UserReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        exclude = ['username']
+
+class UserCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        exclude = ['username']
+
+
+class UserFavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorites
+        exclude = ['ussername']
+

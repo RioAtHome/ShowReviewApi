@@ -5,12 +5,14 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
 from .serializers import ApiUserSerializer
 from .models import ApiUser
-
+from .requestqueue import RequestQueue
 # Create your views here.
+
+
+requestqueue = RequestQueue()
 
 def get_payload(request):
     try:
-        print(request.META)
         token = request.META['HTTP_JWT']
     except KeyError:
         raise AuthenticationFailed('Token not provided')
@@ -80,21 +82,30 @@ def change_role(request):
 
     return Response({'message':'Fliped user!'})
 
+def queue_request(request, model):
+    payload = get_payload(request)
+    requested_data = {'username': payload['usr'],
+        '_model':model,
+    }
+
+    shows_response = requestqueue.call(requested_data)
+    if not shows_response:
+        username = requested_data['username']
+        _model = requested_data['_model']
+        return Response(f"{username} has no {_model}", status=201)
+        
+    shows_response = {requested_data['username']: shows_response}
+    return Response(shows_response, status=201)
 
 @api_view(['GET'])
 def view_comments(request):
-    pass
+    return queue_request(request, 'comments')
 
 @api_view(['GET'])
 def view_reviews(request):
-    pass
-
+    return queue_request(request, 'reviews')
 @api_view(['GET'])
 def view_favorites(request):
-    pass
-
-@api_view(['GET'])
-def view_homepage(request):
-    pass
+    return queue_request(request, 'favorites')
 
 

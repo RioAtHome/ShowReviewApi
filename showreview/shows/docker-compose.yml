@@ -5,9 +5,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: python data_server.py
+    command: python shows_worker.py
+    volumes:
+      - .:/code
+    links:
+      - postgres-show
+    environment:
+      - RABBITMQ_URL="ENTER URL HERE"
     depends_on:
       - postgres-show
+    networks:
+      - my-bridge
   postgres-show:
     image: postgres
     container_name: postgres-show

@@ -32,7 +32,7 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 class Comment(models.Model):
     username = models.CharField(max_length=200)
@@ -43,7 +43,7 @@ class Comment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 
@@ -61,7 +61,7 @@ class Favorites(models.Model):
         return super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.show_id.id
+        return str(self.show_id.id)
 
 
 class Character(models.Model):
