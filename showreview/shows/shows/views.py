@@ -88,17 +88,31 @@ def handle_request(request, model, filter_, auth=False):
 
         return Response(context, status=201)
     elif method == "PUT":
+        payload = get_payload(request)
+        data = request.data
+
+        if _model in ("review", "comment", "favorite"):
+            data["username"] = payload["usr"]
+
+        data.update(filter_)
+
+        if auth:
+            if payload["rol"] != 1:
+                raise AuthenticationFailed(
+                    "User is not Authorized to edit/create data."
+                )
+
         queryset = model.objects.filter(**filter_).first()
-        s = serializer(queryset, data=request.data)
-        serializer.is_valid()
-        serializer.save()
+        s = serializer(queryset, data=data)
+        s.is_valid(raise_exception=True)
+        s.save()
 
         return Response({"message": "Data has been updated successfully"})
-        
 
     elif method == "DELETE":
         model.objects.filter(**filter_).delete()
         return Response({"message": "Data has been deleted successfully"})
+
 
 @api_view(["GET"])
 def shows_view(request):

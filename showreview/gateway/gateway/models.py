@@ -17,6 +17,8 @@ class Api(models.Model):
         mapping_methods = {
             "get": requests.get,
             "post": requests.post,
+            "put": requests.put,
+            "delete": requests.delete,
         }
 
         if request.content_type and request.content_type.lower() == "application/json":
