@@ -64,7 +64,7 @@ def handle_request(request, model, filter_, auth=False):
         payload = get_payload(request)
         data = request.data
 
-        if _model in ("review", "comment"):
+        if _model in ("review", "comment", "favorite"):
             data["username"] = payload["usr"]
 
         data.update(filter_)
@@ -87,7 +87,18 @@ def handle_request(request, model, filter_, auth=False):
         context = {"message": "Data has been added successfully", "data": s.data}
 
         return Response(context, status=201)
+    elif method == "PUT":
+        queryset = model.objects.filter(**filter_).first()
+        s = serializer(queryset, data=request.data)
+        serializer.is_valid()
+        serializer.save()
 
+        return Response({"message": "Data has been updated successfully"})
+        
+
+    elif method == "DELETE":
+        model.objects.filter(**filter_).delete()
+        return Response({"message": "Data has been deleted successfully"})
 
 @api_view(["GET"])
 def shows_view(request):
@@ -96,20 +107,20 @@ def shows_view(request):
     return Response(serializer.data)
 
 
-@api_view(["GET", "POST"])
+@api_view(["GET", "POST", "DELETE", "PUT"])
 def show_view(request, *args, **kwargs):
     filter_ = {"show": kwargs["show_name"]}
     return handle_request(request, "show", filter_, True)
 
 
-@api_view(["GET", "POST"])
+@api_view(["GET", "POST", "DELETE", "PUT"])
 def season_view(request, *args, **kwargs):
     filter_ = {"season_num": kwargs["season_num"], "show": kwargs["show_name"]}
 
     return handle_request(request, "season", filter_, True)
 
 
-@api_view(["GET", "POST"])
+@api_view(["GET", "POST", "DELETE", "PUT"])
 def episode_view(request, *args, **kwargs):
     filter_ = {
         "epi_num": kwargs["epi_num"],
@@ -120,27 +131,27 @@ def episode_view(request, *args, **kwargs):
     return handle_request(request, "episode", filter_, True)
 
 
-@api_view(["GET", "POST"])
+@api_view(["GET", "POST", "DELETE", "PUT"])
 def character_view(request, *args, **kwargs):
     filter_ = {"name": kwargs["char_name"], "show": kwargs["show_name"]}
 
     return handle_request(request, "character", filter_, True)
 
 
-@api_view(["GET", "POST"])
+@api_view(["GET", "POST", "DELETE", "PUT"])
 def review_view(request, *args, **kwargs):
     filter_ = {"show": kwargs["show_name"]}
     return handle_request(request, "review", filter_)
 
 
-@api_view(["GET", "POST"])
+@api_view(["GET", "POST", "DELETE", "PUT"])
 def comment_view(request, *args, **kwargs):
     filter_ = {"review": kwargs["review_id"], "show": kwargs["show_name"]}
 
     return handle_request(request, "comment", filter_)
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def favorite(request, *args, **kwargs):
     filter_ = {"show": kwargs["show_name"]}
 

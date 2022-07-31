@@ -1,6 +1,5 @@
 import requests, json
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 
 
 class Api(models.Model):
@@ -9,9 +8,7 @@ class Api(models.Model):
 
     def handle_request(self, request, relative_url, token=None):
         headers = {}
-
         if token:
-
             headers["JWT"] = token
 
         full_path = self.main_url + relative_url

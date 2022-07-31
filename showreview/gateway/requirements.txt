@@ -3,5 +3,6 @@ django-redis
 django
 requests
 PyJWT
+pytest-django
 djangorestframework
 

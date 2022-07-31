@@ -3,6 +3,7 @@ from jwt.exceptions import DecodeError
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed, NotFound
 from django.core.cache import cache
 from django.conf import settings
 from .models import Api
@@ -90,5 +91,5 @@ class Routing(APIView):
     def delete(self, request):
         return self.send(request)
 
-    def update(self, request):
+    def put(self, request):
         return self.send(request)
