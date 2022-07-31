@@ -7,16 +7,26 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Api',
+            name="Api",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=64, unique=True)),
-                ('main_url', models.URLField(max_length=255, unique=True, verbose_name='URL')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=64, unique=True)),
+                (
+                    "main_url",
+                    models.URLField(max_length=255, unique=True, verbose_name="URL"),
+                ),
             ],
         ),
     ]

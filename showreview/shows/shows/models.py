@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator
 
 class Show(models.Model):
     class Meta:
-        ordering = ['num_of_favorites']
+        ordering = ["num_of_favorites"]
 
     show = models.CharField(max_length=200, primary_key=True)
     network = models.CharField(max_length=200)
@@ -15,7 +15,7 @@ class Show(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        self.show = self.show.lower().replace(' ', '-')
+        self.show = self.show.lower().replace(" ", "-")
         self.network = self.network.lower()
 
         return super().save(*args, **kwargs)
@@ -26,13 +26,14 @@ class Show(models.Model):
 
 class Review(models.Model):
     username = models.CharField(max_length=200)
-    show = models.ForeignKey(Show, related_name='reviews', on_delete=models.CASCADE)
+    show = models.ForeignKey(Show, related_name="reviews", on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.id)
+
 
 class Comment(models.Model):
     username = models.CharField(max_length=200)
@@ -44,7 +45,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return str(self.id)
-
 
 
 class Favorites(models.Model):
@@ -68,7 +68,7 @@ class Character(models.Model):
     STATUS = (("D", "Dead"), ("A", "Alive"), ("U", "Unknown"))
     GENDER = (("M", "MALE"), ("F", "Female"))
 
-    show = models.ForeignKey(Show, related_name='characters',on_delete=models.CASCADE)
+    show = models.ForeignKey(Show, related_name="characters", on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     age = models.PositiveIntegerField()
     gender = models.CharField(max_length=1, choices=GENDER)
@@ -76,13 +76,12 @@ class Character(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
     def __str__(self):
         return self.name
 
 
 class Season(models.Model):
-    show = models.ForeignKey(Show, related_name='seasons', on_delete=models.CASCADE)
+    show = models.ForeignKey(Show, related_name="seasons", on_delete=models.CASCADE)
     season_num = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     number_of_episodes = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)

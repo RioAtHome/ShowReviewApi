@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gateway', '0001_initial'),
+        ("gateway", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='api',
-            name='main_url',
+            model_name="api",
+            name="main_url",
             field=models.URLField(max_length=255, unique=True),
         ),
     ]

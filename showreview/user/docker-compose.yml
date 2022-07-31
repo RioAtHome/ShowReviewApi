@@ -17,11 +17,16 @@ services:
     ports:
       - "8010:8010"
     environment:
+      - SECRET_KEY=SECRET
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - RABBITMQ_URL="ENTER URL HERE"
+      - RABBITMQ_URL=amqps://bwvvcnww:b4WjIHCwAtizbAo72daDwnt3IoOVgRlx@shrimp.rmq.cloudamqp.com/bwvvcnww
     links:
       - postgres-user
     depends_on:
       - postgres-user
+networks: 
+  default: 
+    external: 
+      name: sub_net

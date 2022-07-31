@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0001_initial'),
+        ("user", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='apiuser',
-            name='role',
-            field=models.BooleanField(choices=[(0, 'Normal User'), (1, 'Admin')], default=0),
+            model_name="apiuser",
+            name="role",
+            field=models.BooleanField(
+                choices=[(0, "Normal User"), (1, "Admin")], default=0
+            ),
         ),
     ]

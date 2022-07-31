@@ -17,18 +17,19 @@ from .serializers import (
 
 
 SERAILIZER_MAP = {
-    'show': [ShowSerializer, Show],
-    'comment':[CommentSerializer, Comment],
-    'review':[ReviewSerializer, Review],
-    'favorite':[FavoritesSerializer, Favorites],
-    'character':[CharacterSerializer, Character],
-    'season':[SeasonSerializer, Season],
-    'episode':[EpisodeSerializer, Episode]
+    "show": [ShowSerializer, Show],
+    "comment": [CommentSerializer, Comment],
+    "review": [ReviewSerializer, Review],
+    "favorite": [FavoritesSerializer, Favorites],
+    "character": [CharacterSerializer, Character],
+    "season": [SeasonSerializer, Season],
+    "episode": [EpisodeSerializer, Episode],
 }
+
 
 def get_payload(request):
     try:
-        token = request.META['HTTP_JWT']
+        token = request.META["HTTP_JWT"]
     except KeyError:
         raise AuthenticationFailed("Token is needed")
 
@@ -46,14 +47,14 @@ def handle_request(request, model, filter_, auth=False):
     model = SERAILIZER_MAP[model][1]
     method = request.method
     if method == "GET":
-        if model in ('review', 'comment'):
+        if _model in ("review", "comment"):
             queryset = model.objects.filter(**filter_)[:3]
+            s = serializer(queryset, context=method, many=True)
         else:
             queryset = model.objects.filter(**filter_).first()
+            s = serializer(queryset, context=method)
         if queryset is None:
             raise NotFound()
-
-        s = serializer(queryset, context=method)
 
         context = {_model: s.data}
 
@@ -63,28 +64,27 @@ def handle_request(request, model, filter_, auth=False):
         payload = get_payload(request)
         data = request.data
 
-        if _model in ('review', 'comment'):
-            data['username'] = payload['usr']
+        if _model in ("review", "comment"):
+            data["username"] = payload["usr"]
 
         data.update(filter_)
 
         if auth:
-            if payload['rol'] != 1:
-                raise AuthenticationFailed("User is not Authorized to edit/create data.")
-        
-        queryset = model.objects.filter(**filter_).first()
-        
-        if queryset is not None:
-            return Response(f"Data already exists", status=404)
+            if payload["rol"] != 1:
+                raise AuthenticationFailed(
+                    "User is not Authorized to edit/create data."
+                )
+
+        if _model in ("episode", "season"):
+            queryset = model.objects.filter(**filter_).first()
+            if queryset is not None:
+                return Response(f"Data already exists", status=404)
 
         s = serializer(data=data, context=method)
         s.is_valid(raise_exception=True)
         s.save()
 
-        context = {
-        "message": "Data has been added successfully",
-        "data": s.data
-        }
+        context = {"message": "Data has been added successfully", "data": s.data}
 
         return Response(context, status=201)
 
@@ -95,42 +95,53 @@ def shows_view(request):
     serializer = ShowSerializer(queryset, many=True)
     return Response(serializer.data)
 
+
 @api_view(["GET", "POST"])
 def show_view(request, *args, **kwargs):
-    filter_ = {'show':kwargs['show_name']}
-    return handle_request(request, 'show', filter_, True)
+    filter_ = {"show": kwargs["show_name"]}
+    return handle_request(request, "show", filter_, True)
+
 
 @api_view(["GET", "POST"])
 def season_view(request, *args, **kwargs):
-    filter_ = {'season_num':kwargs['season_num'], 'show':kwargs['show_name']}
-    
-    return handle_request(request, 'season', filter_, True)
+    filter_ = {"season_num": kwargs["season_num"], "show": kwargs["show_name"]}
+
+    return handle_request(request, "season", filter_, True)
+
 
 @api_view(["GET", "POST"])
 def episode_view(request, *args, **kwargs):
-    filter_ = {'epi_num': kwargs['epi_num'], 'season': kwargs['season_num'], 'show':kwargs['show_name']}
-    
-    return handle_request(request, 'episode', filter_, True)
+    filter_ = {
+        "epi_num": kwargs["epi_num"],
+        "season": kwargs["season_num"],
+        "show": kwargs["show_name"],
+    }
+
+    return handle_request(request, "episode", filter_, True)
+
 
 @api_view(["GET", "POST"])
 def character_view(request, *args, **kwargs):
-    filter_ = {'name':kwargs['char_name'], 'show':kwargs['show_name']}
+    filter_ = {"name": kwargs["char_name"], "show": kwargs["show_name"]}
 
-    return handle_request(request, 'character', filter_, True)
+    return handle_request(request, "character", filter_, True)
+
 
 @api_view(["GET", "POST"])
 def review_view(request, *args, **kwargs):
-    filter_ = {'show':kwargs['show_name']}
-    return handle_request(request, 'review', filter_)
+    filter_ = {"show": kwargs["show_name"]}
+    return handle_request(request, "review", filter_)
+
 
 @api_view(["GET", "POST"])
 def comment_view(request, *args, **kwargs):
-    filter_ = {'review': kwargs['review_id'], 'show': kwargs['show_name']}
-    
-    return handle_request(request, 'comment', filter_)
+    filter_ = {"review": kwargs["review_id"], "show": kwargs["show_name"]}
 
-@api_view(["POST"])
+    return handle_request(request, "comment", filter_)
+
+
+@api_view(["GET"])
 def favorite(request, *args, **kwargs):
-    filter_ = {'show_name': kwargs["show_name"]}
+    filter_ = {"show": kwargs["show_name"]}
 
-    return handle_request(request, 'favorite', filter_)
+    return handle_request(request, "favorite", filter_)
