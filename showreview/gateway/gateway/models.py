@@ -1,5 +1,8 @@
 import requests, json
+from requests.exceptions import ConnectionError
 from django.db import models
+from rest_framework.response import Response
+
 
 
 class Api(models.Model):
@@ -27,8 +30,11 @@ class Api(models.Model):
 
         else:
             data = request.data
-
-        return mapping_methods[method](full_path, headers=headers, data=data)
-
+        try:
+            resp = mapping_methods[method](full_path, headers=headers, data=data)
+        except ConnectionError:
+            resp = Response(headers=headers, data=data, status=404)
+        
+        return resp
     def __str__(self):
         return self.name

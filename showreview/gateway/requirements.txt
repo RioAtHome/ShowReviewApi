@@ -4,5 +4,6 @@ django
 requests
 PyJWT
 pytest-django
+requests-mock
 djangorestframework
 

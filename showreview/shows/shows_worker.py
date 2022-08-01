@@ -34,7 +34,6 @@ def handle_request(ch, method, props, body):
     elif _model == "favorites":
         queryset = Favorites.objects.filter(username=username)
         resp = UserFavoriteSerializer(queryset, many=True)
-    print(resp.data)
     ch.basic_publish(
         exchange="",
         routing_key=props.reply_to,

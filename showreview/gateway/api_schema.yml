@@ -1,0 +1,814 @@
+swagger: '2.0'
+info:
+  description: API about shows reviews.. all in json
+  version: 1.0.0
+  title: Simple Shows Review API
+  # put the contact info for your development or API team
+  contact:
+    email: 3odyhayek@gmail.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# tags are used for organizing operations
+tags:
+- name: user
+  description: Operations available on user service
+- name: shows
+  description: Operations available on shows service
+
+# Added by API Auto Mocking Plugin
+schema:
+  http
+host: virtserver.swaggerhub.com
+basePath: /Riowritesdocs/ShowReviewAPI/1.0.0
+# schemes:
+#  - http
+paths:
+  /user/comments/:
+    get:
+      operationId: listview_comments
+      description: 'returns comments of desired user'
+      parameters:
+      - name: JWT
+        in : header
+        required: true
+        description: 'JWT token to get user info'
+        type: string
+          
+      responses:
+        '200':
+          description: 'returns comments of desired user, token should be included'
+      tags:
+      - user
+  /user/reviews/:
+    get:
+      operationId: listview_reviews
+      description: 'Returns reviews of desired user, token should be included'
+      parameters:
+      - name: JWT
+        in : header
+        required: true
+        description: 'JWT token to get user info'
+        type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - user
+  /user/favorites/:
+    get:
+      operationId: listview_favorites
+      description: 'Returns favorites of desired user, token should be included in headers'
+      parameters:
+      - name: JWT
+        in : header
+        required: true
+        description: 'JWT token to get user info'
+        type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - user
+  /user/verify/:
+    post:
+      operationId: createverify
+      description: 'Verify that the token is A-okay!'
+      parameters: 
+      - name: JWT
+        in : header
+        required: true
+        description: 'JWT token to get user info'
+        type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+      - user
+  /user/register/:
+    post:
+      operationId: createregister
+      description: 'Register a new user with username and password'
+      parameters: 
+      - name: user_info
+        in : body
+        description: 'Username'
+        schema:
+          type: object
+          required:
+            - username
+            - password
+          properties:
+            username:
+              type: string
+            password:
+              type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+      - user
+  /user/change-role/:
+    post:
+      operationId: createchange_role
+      description: ''
+      parameters:
+      - name: JWT
+        in : header
+        required: true
+        description: 'JWT token associated with an admin user to get user info'
+        type: string
+      - name: username
+        in : body
+        required: true
+        description: 'The username you want to flip'
+        schema:
+          type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+      - user
+
+  /shows/:
+    get:
+      operationId: listshows_views
+      description: 'Get all shows available.'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+  /shows/{show_name}/:
+    get:
+      operationId: retrieveshow_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: 'show that you want to get'
+        type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    post:
+      operationId: createshow_view
+      description: 'Create a new show'
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in : header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      - name: show-info
+        in: body
+        description: 'show info to add'
+        schema:
+          type: object
+          required:
+            - network
+            - air_date
+          properties:
+            network:
+              type: string
+            air_date:
+              type: string
+            end_date:
+              type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+      - shows
+    put:
+      operationId: updateshow_view
+      description: 'partial update show'
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in : header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      - name: show-info
+        in: body
+        description: 'show info to add'
+        schema:
+          type: object
+          properties:
+            network:
+              type: string
+            air_date:
+              type: string
+            end_date:
+              type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    delete:
+      operationId: destroyshow_view
+      description: 'delete a certain show'
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: 'show name'
+        type: string
+      - name: JWT
+        in : header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - shows
+  /shows/{show_name}/{season_num}/:
+    get:
+      operationId: retrieveseason_view
+      description: 'get season info'
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: season_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    post:
+      operationId: createseason_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: season_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      responses:
+        '201':
+
+          description: ''
+      tags:
+      - shows
+    put:
+      operationId: updateseason_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: season_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    delete:
+      operationId: destroyseason_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: season_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - shows
+  /shows/{show_name}/{season_num}/{epi_num}/:
+    get:
+      operationId: retrieveepisode_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: season_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: epi_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    post:
+      operationId: createepisode_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: season_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: epi_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      - name: epi_info
+        in: body
+        description: "episode info to add"
+        schema:
+          type: object
+          required:
+            - title
+            - epi_num
+            - release_date
+          properties:
+            title:
+              type: string
+            epi_num:
+              type: string
+            release_date:
+              type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+      - shows
+    put:
+      operationId: updateepisode_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: season_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: epi_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      - name: epi_info
+        in: body
+        description: "episode info to add"
+        schema:
+          type: object
+          properties:
+            title:
+              type: string
+            epi_num:
+              type: string
+            release_date:
+              type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    delete:
+      operationId: destroyepisode_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: season_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: epi_num
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - shows
+  /shows/{show_name}/character/{char_name}/:
+    get:
+      operationId: retrievecharacter_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: char_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    post:
+      operationId: createcharacter_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: char_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      - name: char_info
+        in: body
+        description: "character info to add"
+        schema:
+          type: object
+          required:
+            - age
+            - gender
+            - status
+          properties:
+            age:
+              type: integer
+            gender:
+              type: string
+            status:
+              type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+      - shows
+    put:
+      operationId: updatecharacter_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: char_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      - name: char_info
+        in: body
+        description: "character info to add"
+        schema:
+          type: object
+          properties:
+            age:
+              type: integer
+            gender:
+              type: string
+            status:
+              type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    delete:
+      operationId: destroycharacter_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: char_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - shows
+  /shows/{show_name}/reviews/:
+    get:
+      operationId: listreview_views
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    post:
+      operationId: createreview_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      
+      responses:
+        '201':
+          description: ''
+      tags:
+      - shows
+    put:
+      operationId: updatereview_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      - name: review_info
+        in: body
+        description: 'review info'
+        schema:
+          type: object
+          required:
+            - text
+          properties:
+            text:
+              type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    delete:
+      operationId: destroyreview_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      - name: review_info
+        in: body
+        description: 'review info'
+        schema:
+          type: object
+          required:
+            - review_id
+          properties:
+            review_id:
+              type: integer
+      responses:
+        '204':
+          description: ''
+      tags:
+      - shows
+  /shows/{show_name}/reviews/{review_id}/comments/:
+    get:
+      operationId: listcomment_views
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: review_id
+        in: path
+        required: true
+        description: ''
+        type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    post:
+      operationId: createcomment_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: review_id
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      - name: review_info
+        in: body
+        description: 'comment info'
+        schema:
+          type: object
+          required:
+            - text
+          properties:
+            text:
+              type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+      - shows
+    put:
+      operationId: updatecomment_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: review_id
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      - name: review_info
+        in: body
+        description: 'comment info'
+        schema:
+          type: object
+          required:
+            - text
+          properties:
+            text:
+              type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - shows
+    delete:
+      operationId: destroycomment_view
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: review_id
+        in: path
+        required: true
+        description: ''
+        type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - shows
+  /shows/{show_name}/favorites/:
+    post:
+      operationId: createfavorite
+      description: ''
+      parameters:
+      - name: show_name
+        in: path
+        required: true
+        description: ''
+        type: string
+      - name: JWT
+        in: header
+        required: true
+        description: 'JWT token to check if user is admin'
+        type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+      - shows
+# Added by API Auto Mocking Plugin
+schemes:
+ - https

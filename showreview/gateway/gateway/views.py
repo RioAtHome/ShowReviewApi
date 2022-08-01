@@ -40,15 +40,17 @@ def save_token(token):
 class Routing(APIView):
     def send(self, request):
         request_path = request.get_full_path()
+        
         if request_path[-1] != "/":
             request_path += "/"
 
         path = request_path.split("/")
         if len(path) < 2:
             return Response("bad request", status=status.HTTP_400_BAD_REQUEST)
-
+        
         api = Api.objects.filter(name=path[2]).first()
-        user_api = Api.objects.filter(name="user").first()
+        if not api:
+             return Response("bad request", status=status.HTTP_400_BAD_REQUEST)
 
         if api is None:
             return Response("bad request", status=status.HTTP_400_BAD_REQUEST)
@@ -61,7 +63,7 @@ class Routing(APIView):
         else:
             if not check_cache(token):
                 headers = {"content-type": "application/json", "JWT": token}
-                api = Api.objects.filter(name="user").first()
+                user_api = Api.objects.filter(name="user").first()
                 url = user_api.main_url + "user/verify/"
 
                 resp = requests.post(url, headers=headers, timeout=2.50)
@@ -72,7 +74,6 @@ class Routing(APIView):
                     return Response(
                         "Token is invalid", status=status.HTTP_400_BAD_REQUEST
                     )
-        api = Api.objects.filter(name=path[2]).first()
         resp = api.handle_request(request, requested_service, token)
 
         if resp.headers.get("Content-Type", "").lower() == "application/json":
@@ -81,6 +82,7 @@ class Routing(APIView):
             data = resp.content
 
         return Response(data=data, status=resp.status_code)
+
 
     def get(self, request):
         return self.send(request)

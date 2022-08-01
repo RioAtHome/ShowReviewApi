@@ -2,4 +2,6 @@ psycopg2-binary
 django
 djangorestframework
 PyJWT
+pyyaml
+uritemplate
 pika
