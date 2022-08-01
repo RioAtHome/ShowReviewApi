@@ -1,0 +1,1243 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API about shows reviews.. all in json",
+    "version": "1.0.0",
+    "title": "Simple Shows Review API",
+    "contact": {
+      "email": "3odyhayek@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "virtserver.swaggerhub.com",
+  "basePath": "/Riowritesdocs/ShowReviewAPI/1.0.0",
+  "tags": [
+    {
+      "name": "user",
+      "description": "Operations available on user service"
+    },
+    {
+      "name": "shows",
+      "description": "Operations available on shows service"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/user/comments/": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "description": "returns comments of desired user",
+        "operationId": "listview_comments",
+        "parameters": [
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to get user info",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "returns comments of desired user, token should be included"
+          }
+        }
+      }
+    },
+    "/user/reviews/": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "description": "Returns reviews of desired user, token should be included",
+        "operationId": "listview_reviews",
+        "parameters": [
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to get user info",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/user/favorites/": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "description": "Returns favorites of desired user, token should be included in headers",
+        "operationId": "listview_favorites",
+        "parameters": [
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to get user info",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/user/verify/": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "description": "Verify that the token is A-okay!",
+        "operationId": "createverify",
+        "parameters": [
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to get user info",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/user/register/": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "description": "Register a new user with username and password",
+        "operationId": "createregister",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user_info",
+            "description": "Username",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/user_info"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/user/change-role/": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "description": "",
+        "operationId": "createchange_role",
+        "parameters": [
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token associated with an admin user to get user info",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "username",
+            "description": "The username you want to flip",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/shows/": {
+      "get": {
+        "tags": [
+          "shows"
+        ],
+        "description": "Get all shows available.",
+        "operationId": "listshows_views",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/shows/{show_name}/": {
+      "get": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "retrieveshow_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "show that you want to get",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "shows"
+        ],
+        "description": "Create a new show",
+        "operationId": "createshow_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "show-info",
+            "description": "show info to add",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/showinfo_1"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "shows"
+        ],
+        "description": "partial update show",
+        "operationId": "updateshow_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "show-info",
+            "description": "show info to add",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/showinfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "shows"
+        ],
+        "description": "delete a certain show",
+        "operationId": "destroyshow_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "show name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/shows/{show_name}/{season_num}/": {
+      "get": {
+        "tags": [
+          "shows"
+        ],
+        "description": "get season info",
+        "operationId": "retrieveseason_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "season_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "createseason_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "season_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "updateseason_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "season_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "destroyseason_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "season_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/shows/{show_name}/{season_num}/{epi_num}/": {
+      "get": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "retrieveepisode_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "season_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "epi_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "createepisode_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "season_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "epi_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "epi_info",
+            "description": "episode info to add",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/epi_info_1"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "updateepisode_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "season_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "epi_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "epi_info",
+            "description": "episode info to add",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/epi_info"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "destroyepisode_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "season_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "epi_num",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/shows/{show_name}/character/{char_name}/": {
+      "get": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "retrievecharacter_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "char_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "createcharacter_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "char_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "char_info",
+            "description": "character info to add",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/char_info_1"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "updatecharacter_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "char_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "char_info",
+            "description": "character info to add",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/char_info"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "destroycharacter_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "char_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/shows/{show_name}/reviews/": {
+      "get": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "listreview_views",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "createreview_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "updatereview_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "review_info",
+            "description": "review info",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/review_info"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "destroyreview_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "review_info",
+            "description": "review info",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/review_info_1"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/shows/{show_name}/reviews/{review_id}/comments/": {
+      "get": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "listcomment_views",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "review_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "createcomment_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "review_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "review_info",
+            "description": "comment info",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/review_info_3"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "updatecomment_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "review_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "review_info",
+            "description": "comment info",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/review_info_2"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "destroycomment_view",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "review_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/shows/{show_name}/favorites/": {
+      "post": {
+        "tags": [
+          "shows"
+        ],
+        "description": "",
+        "operationId": "createfavorite",
+        "parameters": [
+          {
+            "name": "show_name",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "JWT",
+            "in": "header",
+            "description": "JWT token to check if user is admin",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "showinfo_1": {
+      "type": "object",
+      "required": [
+        "air_date",
+        "network"
+      ],
+      "properties": {
+        "network": {
+          "type": "string"
+        },
+        "air_date": {
+          "type": "string"
+        },
+        "end_date": {
+          "type": "string"
+        }
+      }
+    },
+    "epi_info_1": {
+      "type": "object",
+      "required": [
+        "epi_num",
+        "release_date",
+        "title"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "epi_num": {
+          "type": "string"
+        },
+        "release_date": {
+          "type": "string"
+        }
+      }
+    },
+    "user_info": {
+      "type": "object",
+      "required": [
+        "password",
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "char_info": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "integer"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "epi_info": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "epi_num": {
+          "type": "string"
+        },
+        "release_date": {
+          "type": "string"
+        }
+      }
+    },
+    "review_info_3": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "review_info_2": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "review_info_1": {
+      "type": "object",
+      "required": [
+        "review_id"
+      ],
+      "properties": {
+        "review_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "showinfo": {
+      "type": "object",
+      "properties": {
+        "network": {
+          "type": "string"
+        },
+        "air_date": {
+          "type": "string"
+        },
+        "end_date": {
+          "type": "string"
+        }
+      }
+    },
+    "review_info": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "char_info_1": {
+      "type": "object",
+      "required": [
+        "age",
+        "gender",
+        "status"
+      ],
+      "properties": {
+        "age": {
+          "type": "integer"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
