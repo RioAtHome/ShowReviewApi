@@ -14,6 +14,7 @@
    const ui = SwaggerUIBundle({
     url: "{% static 'swagger.json' %}" ,
     dom_id: '#swagger-ui',
+    defaultModelsExpandDepth: -1,
     presets: [
       SwaggerUIBundle.presets.apis,
       SwaggerUIBundle.SwaggerUIStandalonePreset
