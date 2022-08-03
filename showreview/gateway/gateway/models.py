@@ -19,7 +19,7 @@ class Api(models.Model):
         mapping_methods = {
             "get": requests.get,
             "post": requests.post,
-            "put": requests.put,
+            "patch": requests.patch,
             "delete": requests.delete,
         }
 

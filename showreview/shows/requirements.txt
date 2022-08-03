@@ -2,4 +2,5 @@ psycopg2-binary
 django
 djangorestframework
 PyJWT
+pytest-django
 pika

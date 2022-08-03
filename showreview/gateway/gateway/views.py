@@ -116,5 +116,5 @@ class Routing(APIView):
     def delete(self, request):
         return self.send(request)
 
-    def put(self, request):
+    def patch(self, request):
         return self.send(request)

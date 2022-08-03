@@ -75,10 +75,18 @@ def handle_request(request, model, filter_, auth=False):
                     "User is not Authorized to edit/create data."
                 )
 
-        if _model in ("episode", "season"):
+        if _model in ("episode", "season", "character"):
+            show_name = Show.objects.filter(show=filter_['show'])
             queryset = model.objects.filter(**filter_).first()
-            if queryset is not None:
-                return Response(f"Data already exists", status=404)
+            if not show_name:
+                return Response(f"{filter_['show']} does not exists", status=400)
+            if _model == 'episode':
+                season_ = Season.objects.filter(season_num=filter_['season_num'])
+                if not season_:
+                    return Response(f"{filter_['show']} does not have season {filter_['season_num']}.", status=400)
+            if queryset:
+                return Response(f"Data already exists", status=400)
+
 
         s = serializer(data=data, context=method)
         s.is_valid(raise_exception=True)
@@ -87,7 +95,7 @@ def handle_request(request, model, filter_, auth=False):
         context = {"message": "Data has been added successfully", "data": s.data}
 
         return Response(context, status=201)
-    elif method == "PUT":
+    elif method == "PATCH":
         payload = get_payload(request)
         data = request.data
 
@@ -103,14 +111,28 @@ def handle_request(request, model, filter_, auth=False):
                 )
 
         queryset = model.objects.filter(**filter_).first()
-        s = serializer(queryset, data=data)
-        s.is_valid(raise_exception=True)
-        s.save()
+        if queryset:
+            s = serializer(queryset, data=data, partial=True)
+            s.is_valid(raise_exception=True)
+            s.save()
 
+        else:
+            raise NotFound()
         return Response({"message": "Data has been updated successfully"})
 
     elif method == "DELETE":
-        model.objects.filter(**filter_).delete()
+        payload = get_payload(request)
+        if auth:
+            if payload["rol"] != 1:
+                raise AuthenticationFailed(
+                    "User is not Authorized to edit/create data."
+                )
+
+        queryset = model.objects.filter(**filter_)
+        if queryset:
+            queryset.delete()
+        else:
+            raise NotFound()
         return Response({"message": "Data has been deleted successfully"})
 
 
@@ -121,20 +143,20 @@ def shows_view(request):
     return Response(serializer.data)
 
 
-@api_view(["GET", "POST", "DELETE", "PUT"])
+@api_view(["GET", "POST", "DELETE", "PATCH"])
 def show_view(request, *args, **kwargs):
     filter_ = {"show": kwargs["show_name"]}
     return handle_request(request, "show", filter_, True)
 
 
-@api_view(["GET", "POST", "DELETE", "PUT"])
+@api_view(["GET", "POST", "DELETE"])
 def season_view(request, *args, **kwargs):
     filter_ = {"season_num": kwargs["season_num"], "show": kwargs["show_name"]}
 
     return handle_request(request, "season", filter_, True)
 
 
-@api_view(["GET", "POST", "DELETE", "PUT"])
+@api_view(["GET", "POST", "DELETE"])
 def episode_view(request, *args, **kwargs):
     filter_ = {
         "epi_num": kwargs["epi_num"],
@@ -145,20 +167,20 @@ def episode_view(request, *args, **kwargs):
     return handle_request(request, "episode", filter_, True)
 
 
-@api_view(["GET", "POST", "DELETE", "PUT"])
+@api_view(["GET", "POST", "DELETE", "PATCH"])
 def character_view(request, *args, **kwargs):
     filter_ = {"name": kwargs["char_name"], "show": kwargs["show_name"]}
 
     return handle_request(request, "character", filter_, True)
 
 
-@api_view(["GET", "POST", "DELETE", "PUT"])
+@api_view(["GET", "POST", "DELETE", "PATCH"])
 def review_view(request, *args, **kwargs):
     filter_ = {"show": kwargs["show_name"]}
     return handle_request(request, "review", filter_)
 
 
-@api_view(["GET", "POST", "DELETE", "PUT"])
+@api_view(["GET", "POST", "DELETE", "PATCH"])
 def comment_view(request, *args, **kwargs):
     filter_ = {"review": kwargs["review_id"], "show": kwargs["show_name"]}
 
