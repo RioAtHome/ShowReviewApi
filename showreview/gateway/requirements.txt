@@ -5,6 +5,5 @@ requests
 PyJWT
 pytest-django
 requests-mock
-drf-spectacular
 djangorestframework
 

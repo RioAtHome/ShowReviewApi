@@ -9,10 +9,10 @@ from .views import (
 )
 
 urlpatterns = [
-    path("verify/", verify),
-    path("register/", register),
-    path("change-role/", change_role),
-    path("comments/", view_comments),
-    path("reviews/", view_reviews),
-    path("favorites/", view_favorites),
+    path("verify/", verify, name="verify"),
+    path("register/", register, name="register"),
+    path("change-role/", change_role, name="change_role"),
+    path("comments/", view_comments, name="user_comments"),
+    path("reviews/", view_reviews, name="user_reviews"),
+    path("favorites/", view_favorites, name="user_favorites"),
 ]

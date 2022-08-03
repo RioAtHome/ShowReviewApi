@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'rest_framework',
+    "rest_framework",
     "user.apps.UserConfig",
 ]
 
@@ -132,3 +132,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "user.ApiUser"
 USER_DETAILS_SERIALIZER = "user.serializers.ApiUserSerializer"
 APPEND_SLASH = True
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 3,
+    "TEST_REQUEST_DEFAULT_FORMAT": "json",
+}

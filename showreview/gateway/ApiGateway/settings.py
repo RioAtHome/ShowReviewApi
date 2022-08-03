@@ -57,14 +57,8 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-SPECTACULAR_SETTINGS = {
-    'SWAGGER_UI_SETTINGS': {
-        'url': "/Python-bascis/showreview/gateway/api_schema.yaml"
-    },
-}
 ROOT_URLCONF = "ApiGateway.urls"
 
 TEMPLATES = [

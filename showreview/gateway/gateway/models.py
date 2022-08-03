@@ -4,7 +4,6 @@ from django.db import models
 from rest_framework.response import Response
 
 
-
 class Api(models.Model):
     name = models.CharField(max_length=64, unique=True)
     main_url = models.URLField(max_length=255, unique=True)
@@ -34,7 +33,8 @@ class Api(models.Model):
             resp = mapping_methods[method](full_path, headers=headers, data=data)
         except ConnectionError:
             resp = Response(headers=headers, data=data, status=404)
-        
+
         return resp
+
     def __str__(self):
         return self.name

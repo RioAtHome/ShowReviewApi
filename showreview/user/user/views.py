@@ -31,9 +31,7 @@ def queue_request(request, model):
         "username": payload["usr"],
         "_model": model,
     }
-
     shows_response = requestqueue.call(requested_data)
-
     if not shows_response:
         username = requested_data["username"]
         _model = requested_data["_model"]

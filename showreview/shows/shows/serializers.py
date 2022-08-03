@@ -86,11 +86,10 @@ class UserReviewSerializer(serializers.ModelSerializer):
 class UserCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = "__all__"
         exclude = ["username"]
 
 
 class UserFavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorites
-        exclude = ["ussername"]
+        fields = "__all__"
