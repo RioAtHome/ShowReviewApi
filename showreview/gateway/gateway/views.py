@@ -74,7 +74,6 @@ def validate_token(token):
         url = user_api.main_url + "user/verify/"
 
         resp = requests.post(url, headers=headers, timeout=2.50)
-        print(resp.status_code == 200)
         if resp.status_code == 200:
             save_token(token)
             return True

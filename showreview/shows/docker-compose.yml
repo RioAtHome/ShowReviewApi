@@ -27,7 +27,10 @@ services:
       - POSTGRES_PASSWORD=postgres
   api-show:
     build: .
-    command: python manage.py runserver 0.0.0.0:8015
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8015"
     volumes:
       - .:/code
     ports:
@@ -36,6 +39,7 @@ services:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      
     links:
       - postgres-show
     depends_on:

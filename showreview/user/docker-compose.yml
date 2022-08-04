@@ -11,7 +11,10 @@ services:
       - POSTGRES_PASSWORD=postgres
   api-user:
     build: .
-    command: python manage.py runserver 0.0.0.0:8010
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8010"
     volumes:
       - .:/code
     ports:
@@ -22,6 +25,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - RABBITMQ_URL=amqps://bwvvcnww:b4WjIHCwAtizbAo72daDwnt3IoOVgRlx@shrimp.rmq.cloudamqp.com/bwvvcnww?heartbeat=600&blocked_connection_timeout=300
+
     links:
       - postgres-user
     depends_on:

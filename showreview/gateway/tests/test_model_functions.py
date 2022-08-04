@@ -1,9 +1,6 @@
 import pytest
-import requests
 from django.test import RequestFactory
 from gateway.models import Api
-from django.http import HttpRequest
-from rest_framework.response import Response
 
 
 @pytest.mark.django_db

@@ -81,9 +81,9 @@ def handle_request(request, model, filter_, auth=False):
             if not show_name:
                 return Response(f"{filter_['show']} does not exists", status=400)
             if _model == 'episode':
-                season_ = Season.objects.filter(season_num=filter_['season_num'])
+                season_ = Season.objects.filter(season_num=filter_['season'])
                 if not season_:
-                    return Response(f"{filter_['show']} does not have season {filter_['season_num']}.", status=400)
+                    return Response(f"{filter_['show']} does not have season {filter_['season']}.", status=400)
             if queryset:
                 return Response(f"Data already exists", status=400)
 
@@ -139,8 +139,10 @@ def handle_request(request, model, filter_, auth=False):
 @api_view(["GET"])
 def shows_view(request):
     queryset = Show.objects.all()[:3]
-    serializer = ShowSerializer(queryset, many=True)
-    return Response(serializer.data)
+    if queryset:
+        serializer = ShowSerializer(queryset, many=True)
+        return Response(serializer.data)
+    return Response({"message": "No data ...yet"}, status=400)
 
 
 @api_view(["GET", "POST", "DELETE", "PATCH"])

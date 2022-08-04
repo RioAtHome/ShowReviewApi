@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from collections import OrderedDict
 from .models import Show, Comment, Review, Favorites, Character, Season, Episode
 
 
@@ -58,17 +59,19 @@ class ShowSerializer(serializers.ModelSerializer):
         extra_fields = ["seasons", "reviews", "characters"]
 
 
+
 class CommentSerializer(serializers.ModelSerializer):
+    review = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field='text'
+     )
+
+    show = serializers.StringRelatedField(many=False, read_only=True)
     class Meta:
         model = Comment
         fields = "__all__"
-        depth = 3
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        method = self.context
-        if method == "POST":
-            self.Meta.depth = 0
+        extra_fields = ['review', 'show']
 
 
 class FavoritesSerializer(serializers.ModelSerializer):
