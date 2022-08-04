@@ -11,7 +11,7 @@ services:
     depends_on:
       - postgres-show
     environment:
-      - RABBITMQ_URL=amqps://bwvvcnww:b4WjIHCwAtizbAo72daDwnt3IoOVgRlx@shrimp.rmq.cloudamqp.com/bwvvcnww?heartbeat=600&blocked_connection_timeout=300
+      - RABBITMQ_URL=URL?heartbeat=600&blocked_connection_timeout=300
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
